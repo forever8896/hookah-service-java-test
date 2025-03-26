@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hookah Lounge Simulation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #111;
+            color: #eee;
+            padding: 2rem;
+        }
+        input, button {
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+        }
+        #log {
+            margin-top: 2rem;
+            border: 1px solid #444;
+            padding: 1rem;
+            background: #222;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<h1>💨 Welcome to the Hookah Lounge</h1>
+<input type="text" id="customerName" placeholder="Enter your name" />
+<button onclick="enterLounge()">🚪 Enter Lounge</button>
+
+<div id="log"></div>
+
+<script>
+    const logEl = document.getElementById("log");
+
+    function log(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        logEl.innerText += `[${timestamp}] ${message}\n`;
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    async function enterLounge() {
+        const name = document.getElementById("customerName").value.trim();
+        if (!name) return alert("Enter your name first!");
+
+        log(`Sending ${name} into the lounge...`);
+        try {
+            const res = await fetch(`/api/enter?customerName=${encodeURIComponent(name)}`, {
+                method: "POST"
+            });
+
+            if (!res.ok) throw new Error(await res.text());
+            const result = await res.text();
+            log(result);
+        } catch (err) {
+            log(`❌ Error: ${err.message}`);
+        }
+    }
+</script>
+</body>
+</html>
