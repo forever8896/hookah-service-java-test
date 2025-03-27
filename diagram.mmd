@@ -1,0 +1,34 @@
+sequenceDiagram
+    actor Customer
+    participant API as OrderController
+    participant EventProc as EventProcessor
+    participant SpringPub as ApplicationEventPublisher
+    participant Listener as OrderEventListener
+    participant Service as OrderService
+
+    Customer->>API: POST /api/enter?customerName=Ali
+    API->>EventProc: publishEvent(CUSTOMER_ENTERED)
+    EventProc->>SpringPub: publish Spring event
+
+    SpringPub->>Listener: OrderEvent(CUSTOMER_ENTERED)
+    Listener->>Service: processEvent(CUSTOMER_ENTERED)
+    Listener->>EventProc: publishEvent(HOOKAH_GUY_NOTICED)
+
+    EventProc->>SpringPub: publish Spring event
+    SpringPub->>Listener: OrderEvent(HOOKAH_GUY_NOTICED)
+    Listener->>Service: processEvent(HOOKAH_GUY_NOTICED)
+    Listener->>EventProc: publishEvent(HOOKAH_GUY_AT_TABLE)
+
+    EventProc->>SpringPub: publish Spring event
+    SpringPub->>Listener: OrderEvent(HOOKAH_GUY_AT_TABLE)
+    Listener->>Service: processEvent(HOOKAH_GUY_AT_TABLE)
+    Listener->>EventProc: publishEvent(ORDER_ACCEPTED)
+
+    EventProc->>SpringPub: publish Spring event
+    SpringPub->>Listener: OrderEvent(ORDER_ACCEPTED)
+    Listener->>Service: processEvent(ORDER_ACCEPTED)
+    Listener->>EventProc: publishEvent(ORDER_PLACED)
+
+    EventProc->>SpringPub: publish Spring event
+    SpringPub->>Listener: OrderEvent(ORDER_PLACED)
+    Listener->>Service: processEvent(ORDER_PLACED)
